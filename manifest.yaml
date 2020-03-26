@@ -1,0 +1,358 @@
+---
+# Source: teslamate/charts/postgresql/templates/secrets.yaml
+
+apiVersion: v1
+kind: Secret
+metadata:
+  name: release-name-postgresql
+  labels:
+    app: postgresql
+    chart: postgresql-8.1.0
+    release: "release-name"
+    heritage: "Tiller"
+type: Opaque
+data:
+  postgresql-password: "dGVzbGFtYXRl"
+---
+# Source: teslamate/charts/postgresql/templates/svc-headless.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: release-name-postgresql-headless
+  labels:
+    app: postgresql
+    chart: postgresql-8.1.0
+    release: "release-name"
+    heritage: "Tiller"
+spec:
+  type: ClusterIP
+  clusterIP: None
+  ports:
+    - name: tcp-postgresql
+      port: 5432
+      targetPort: tcp-postgresql
+  selector:
+    app: postgresql
+    release: "release-name"
+
+---
+# Source: teslamate/charts/postgresql/templates/svc.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: release-name-postgresql
+  labels:
+    app: postgresql
+    chart: postgresql-8.1.0
+    release: "release-name"
+    heritage: "Tiller"
+spec:
+  type: ClusterIP
+  ports:
+    - name: tcp-postgresql
+      port: 5432
+      targetPort: tcp-postgresql
+  selector:
+    app: postgresql
+    release: "release-name"
+    role: master
+
+---
+# Source: teslamate/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: release-name-teslamate
+  labels:
+    app.kubernetes.io/name: teslamate
+    helm.sh/chart: teslamate-2.0.3
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/managed-by: Tiller
+spec:
+  type: LoadBalancer
+  ports:
+    - port: 4000
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    app.kubernetes.io/name: teslamate
+    app.kubernetes.io/instance: release-name
+
+---
+# Source: teslamate/templates/tests/test-connection.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: "release-name-teslamate-test-connection"
+  labels:
+    app.kubernetes.io/name: teslamate
+    helm.sh/chart: teslamate-2.0.3
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/managed-by: Tiller
+  annotations:
+    "helm.sh/hook": test-success
+spec:
+  containers:
+    - name: wget
+      image: busybox
+      command: ['wget']
+      args:  ['release-name-teslamate:4000']
+  restartPolicy: Never
+
+---
+# Source: teslamate/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: release-name-teslamate
+  labels:
+    app.kubernetes.io/name: teslamate
+    helm.sh/chart: teslamate-2.0.3
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/managed-by: Tiller
+spec:
+  replicas: 1
+  revisionHistoryLimit: 3
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: teslamate
+      app.kubernetes.io/instance: release-name
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: teslamate
+        app.kubernetes.io/instance: release-name
+    spec:
+      containers:
+        - name: teslamate
+          image: "teslamate/teslamate:1.18.1"
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: DATABASE_USER
+              value: "teslamate"
+            - name: DATABASE_PASS
+              value: "teslamate"
+            - name: DATABASE_NAME
+              value: "teslamate"
+            - name: DATABASE_HOST
+              value: release-name-postgresql
+            - name: DISABLE_MQTT
+              value: "true"
+            - name: TZ
+              value: "UTC"
+            - name: LOCALE
+              value: "en"
+          ports:
+            - name: http
+              containerPort: 4000
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+            failureThreshold: 5
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+            failureThreshold: 5
+            periodSeconds: 10
+          startupProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 5
+            failureThreshold: 30
+            periodSeconds: 10
+          resources:
+            {}
+            
+
+---
+# Source: teslamate/charts/postgresql/templates/statefulset.yaml
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: release-name-postgresql
+  labels:
+    app: postgresql
+    chart: postgresql-8.1.0
+    release: "release-name"
+    heritage: "Tiller"
+spec:
+  serviceName: release-name-postgresql-headless
+  replicas: 1
+  updateStrategy:
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      app: postgresql
+      release: "release-name"
+      role: master
+  template:
+    metadata:
+      name: release-name-postgresql
+      labels:
+        app: postgresql
+        chart: postgresql-8.1.0
+        release: "release-name"
+        heritage: "Tiller"
+        role: master
+    spec:      
+      securityContext:
+        fsGroup: 1001
+      initContainers:
+        - name: init-chmod-data
+          image: docker.io/bitnami/minideb:stretch
+          imagePullPolicy: "Always"
+          resources:
+            requests:
+              cpu: 250m
+              memory: 256Mi
+            
+          command:
+            - /bin/sh
+            - -c
+            - |
+              mkdir -p /data//data
+              chmod 700 /data//data
+              find /data/ -mindepth 0 -maxdepth 1 -not -name ".snapshot" -not -name "lost+found" | \
+                xargs chown -R 1001:1001
+              chmod -R 777 /dev/shm
+          securityContext:
+            runAsUser: 0
+          volumeMounts:
+            - name: data
+              mountPath: /data/
+              subPath: 
+            - name: dshm
+              mountPath: /dev/shm
+      containers:
+        - name: release-name-postgresql
+          image: docker.io/postgres:12.1
+          imagePullPolicy: "IfNotPresent"
+          resources:
+            requests:
+              cpu: 250m
+              memory: 256Mi
+            
+          securityContext:
+            runAsUser: 1001
+          env:
+            - name: BITNAMI_DEBUG
+              value: "false"
+            - name: POSTGRESQL_PORT_NUMBER
+              value: "5432"
+            - name: POSTGRESQL_VOLUME_DIR
+              value: "/data/"
+            - name: PGDATA
+              value: "/data/pgdata"
+            - name: POSTGRES_USER
+              value: "teslamate"
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: release-name-postgresql
+                  key: postgresql-password
+            - name: POSTGRES_DB
+              value: "teslamate"
+            - name: POSTGRESQL_ENABLE_LDAP
+              value: "no"
+          ports:
+            - name: tcp-postgresql
+              containerPort: 5432
+          livenessProbe:
+            exec:
+              command:
+                - /bin/sh
+                - -c
+                - exec pg_isready -U "teslamate" -d "teslamate" -h 127.0.0.1 -p 5432
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+            successThreshold: 1
+            failureThreshold: 6
+          readinessProbe:
+            exec:
+              command:
+                - /bin/sh
+                - -c
+                - -e
+                - |
+                  pg_isready -U "teslamate" -d "teslamate" -h 127.0.0.1 -p 5432
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            timeoutSeconds: 5
+            successThreshold: 1
+            failureThreshold: 6
+          volumeMounts:
+            - name: dshm
+              mountPath: /dev/shm
+            - name: data
+              mountPath: /data/
+              subPath: 
+      volumes:
+        - name: dshm
+          emptyDir:
+            medium: Memory
+            sizeLimit: 1Gi
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes:
+          - "ReadWriteOnce"
+        resources:
+          requests:
+            storage: "8Gi"
+        
+
+---
+# Source: teslamate/charts/postgresql/templates/configmap.yaml
+
+
+---
+# Source: teslamate/charts/postgresql/templates/extended-config-configmap.yaml
+
+
+---
+# Source: teslamate/charts/postgresql/templates/initialization-configmap.yaml
+
+
+---
+# Source: teslamate/charts/postgresql/templates/metrics-configmap.yaml
+
+
+---
+# Source: teslamate/charts/postgresql/templates/metrics-svc.yaml
+
+
+---
+# Source: teslamate/charts/postgresql/templates/networkpolicy.yaml
+
+
+---
+# Source: teslamate/charts/postgresql/templates/prometheusrule.yaml
+
+
+---
+# Source: teslamate/charts/postgresql/templates/serviceaccount.yaml
+
+---
+# Source: teslamate/charts/postgresql/templates/servicemonitor.yaml
+
+
+---
+# Source: teslamate/charts/postgresql/templates/statefulset-slaves.yaml
+
+
+---
+# Source: teslamate/charts/postgresql/templates/svc-read.yaml
+
+
+---
+# Source: teslamate/templates/ingress.yaml
+
+
