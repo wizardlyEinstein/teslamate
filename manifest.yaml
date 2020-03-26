@@ -1,29 +1,20 @@
 ---
-# Source: teslamate/charts/postgresql/templates/secrets.yaml
-
 apiVersion: v1
 kind: Secret
 metadata:
-  name: release-name-postgresql
+  name: postgresql
   labels:
     app: postgresql
-    chart: postgresql-8.1.0
-    release: "release-name"
-    heritage: "Tiller"
 type: Opaque
 data:
   postgresql-password: "dGVzbGFtYXRl"
 ---
-# Source: teslamate/charts/postgresql/templates/svc-headless.yaml
 apiVersion: v1
 kind: Service
 metadata:
-  name: release-name-postgresql-headless
+  name: postgresql-headless
   labels:
     app: postgresql
-    chart: postgresql-8.1.0
-    release: "release-name"
-    heritage: "Tiller"
 spec:
   type: ClusterIP
   clusterIP: None
@@ -33,19 +24,14 @@ spec:
       targetPort: tcp-postgresql
   selector:
     app: postgresql
-    release: "release-name"
 
 ---
-# Source: teslamate/charts/postgresql/templates/svc.yaml
 apiVersion: v1
 kind: Service
 metadata:
-  name: release-name-postgresql
+  name: postgresql
   labels:
     app: postgresql
-    chart: postgresql-8.1.0
-    release: "release-name"
-    heritage: "Tiller"
 spec:
   type: ClusterIP
   ports:
@@ -54,20 +40,15 @@ spec:
       targetPort: tcp-postgresql
   selector:
     app: postgresql
-    release: "release-name"
     role: master
 
 ---
-# Source: teslamate/templates/service.yaml
 apiVersion: v1
 kind: Service
 metadata:
-  name: release-name-teslamate
+  name: teslamate
   labels:
     app.kubernetes.io/name: teslamate
-    helm.sh/chart: teslamate-2.0.3
-    app.kubernetes.io/instance: release-name
-    app.kubernetes.io/managed-by: Tiller
 spec:
   type: LoadBalancer
   ports:
@@ -77,52 +58,24 @@ spec:
       name: http
   selector:
     app.kubernetes.io/name: teslamate
-    app.kubernetes.io/instance: release-name
 
 ---
-# Source: teslamate/templates/tests/test-connection.yaml
-apiVersion: v1
-kind: Pod
-metadata:
-  name: "release-name-teslamate-test-connection"
-  labels:
-    app.kubernetes.io/name: teslamate
-    helm.sh/chart: teslamate-2.0.3
-    app.kubernetes.io/instance: release-name
-    app.kubernetes.io/managed-by: Tiller
-  annotations:
-    "helm.sh/hook": test-success
-spec:
-  containers:
-    - name: wget
-      image: busybox
-      command: ['wget']
-      args:  ['release-name-teslamate:4000']
-  restartPolicy: Never
-
----
-# Source: teslamate/templates/deployment.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: release-name-teslamate
+  name: teslamate
   labels:
     app.kubernetes.io/name: teslamate
-    helm.sh/chart: teslamate-2.0.3
-    app.kubernetes.io/instance: release-name
-    app.kubernetes.io/managed-by: Tiller
 spec:
   replicas: 1
   revisionHistoryLimit: 3
   selector:
     matchLabels:
       app.kubernetes.io/name: teslamate
-      app.kubernetes.io/instance: release-name
   template:
     metadata:
       labels:
         app.kubernetes.io/name: teslamate
-        app.kubernetes.io/instance: release-name
     spec:
       containers:
         - name: teslamate
@@ -136,7 +89,7 @@ spec:
             - name: DATABASE_NAME
               value: "teslamate"
             - name: DATABASE_HOST
-              value: release-name-postgresql
+              value: postgresql
             - name: DISABLE_MQTT
               value: "true"
             - name: TZ
@@ -166,39 +119,28 @@ spec:
             initialDelaySeconds: 5
             failureThreshold: 30
             periodSeconds: 10
-          resources:
-            {}
-            
 
 ---
-# Source: teslamate/charts/postgresql/templates/statefulset.yaml
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: release-name-postgresql
+  name: postgresql
   labels:
     app: postgresql
-    chart: postgresql-8.1.0
-    release: "release-name"
-    heritage: "Tiller"
 spec:
-  serviceName: release-name-postgresql-headless
+  serviceName: postgresql-headless
   replicas: 1
   updateStrategy:
     type: RollingUpdate
   selector:
     matchLabels:
       app: postgresql
-      release: "release-name"
       role: master
   template:
     metadata:
-      name: release-name-postgresql
+      name: postgresql
       labels:
         app: postgresql
-        chart: postgresql-8.1.0
-        release: "release-name"
-        heritage: "Tiller"
         role: master
     spec:      
       securityContext:
@@ -230,7 +172,7 @@ spec:
             - name: dshm
               mountPath: /dev/shm
       containers:
-        - name: release-name-postgresql
+        - name: postgresql
           image: docker.io/postgres:12.1
           imagePullPolicy: "IfNotPresent"
           resources:
@@ -254,7 +196,7 @@ spec:
             - name: POSTGRES_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: release-name-postgresql
+                  name: postgresql
                   key: postgresql-password
             - name: POSTGRES_DB
               value: "teslamate"
@@ -308,51 +250,4 @@ spec:
           requests:
             storage: "8Gi"
         
-
----
-# Source: teslamate/charts/postgresql/templates/configmap.yaml
-
-
----
-# Source: teslamate/charts/postgresql/templates/extended-config-configmap.yaml
-
-
----
-# Source: teslamate/charts/postgresql/templates/initialization-configmap.yaml
-
-
----
-# Source: teslamate/charts/postgresql/templates/metrics-configmap.yaml
-
-
----
-# Source: teslamate/charts/postgresql/templates/metrics-svc.yaml
-
-
----
-# Source: teslamate/charts/postgresql/templates/networkpolicy.yaml
-
-
----
-# Source: teslamate/charts/postgresql/templates/prometheusrule.yaml
-
-
----
-# Source: teslamate/charts/postgresql/templates/serviceaccount.yaml
-
----
-# Source: teslamate/charts/postgresql/templates/servicemonitor.yaml
-
-
----
-# Source: teslamate/charts/postgresql/templates/statefulset-slaves.yaml
-
-
----
-# Source: teslamate/charts/postgresql/templates/svc-read.yaml
-
-
----
-# Source: teslamate/templates/ingress.yaml
-
 
