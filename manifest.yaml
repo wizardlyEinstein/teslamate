@@ -108,18 +108,6 @@ spec:
             - name: http
               containerPort: 4000
               protocol: TCP
-          livenessProbe:
-            httpGet:
-              path: /
-              port: http
-            failureThreshold: 5
-            periodSeconds: 10
-          readinessProbe:
-            httpGet:
-              path: /
-              port: http
-            failureThreshold: 5
-            periodSeconds: 10
 
 ---
 apiVersion: apps/v1
