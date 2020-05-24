@@ -1,0 +1,9 @@
+apiVersion: goabout.com/v1beta1
+kind: SopsSecretGenerator
+metadata:
+  name: traefik-forward-auth-secrets 
+  labels:
+    app: traefik-forward-auth
+envs:
+- traefik-forward-auth.enc.env
+type: Opaque
