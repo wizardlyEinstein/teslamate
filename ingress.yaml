@@ -1,0 +1,74 @@
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: redirect
+  labels:
+    app: teslamate
+spec:
+  entryPoints:
+    - web
+  routes:
+  - match: Host(`teslamate.bender.sway.org`)
+    kind: Rule
+    services:
+      - name: whoami
+        port: 80
+    middlewares:
+      - name: redirect
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: teslamate
+  labels:
+    app: teslamate
+spec:
+  entryPoints:
+    - websecure
+  tls:
+    certResolver: myresolver
+  routes:
+  - match: Host(`teslamate.bender.sway.org`)
+    kind: Rule
+    services:
+      - name: teslamate
+        port: 4000
+    middlewares:
+      - name: teslamate-traefik-forward-auth
+  - match: Host(`teslamate.bender.sway.org`) && PathPrefix(`/whoami`)
+    kind: Rule
+    services:
+      - name: whoami
+        port: 80
+    middlewares:
+      - name: teslamate-traefik-forward-auth
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: grafana 
+  labels:
+    app: teslamate
+spec:
+  entryPoints:
+    - websecure
+  tls:
+    certResolver: myresolver
+  routes:
+  - match: Host(`teslamate.bender.sway.org`) && PathPrefix(`/grafana`)
+    kind: Rule
+    services:
+      - name: grafana
+        port: 4001
+    middlewares:
+      - name: teslamate-traefik-forward-auth
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: redirect
+spec:
+  redirectScheme:
+    scheme: https
+    permanent: true

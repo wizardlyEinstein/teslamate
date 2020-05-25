@@ -1,10 +1,12 @@
 namespace: teslamate 
 
 resources:
-- manifest.yaml 
-- auth.yaml
+- teslamate.yaml 
+- postgresql.yaml
 - grafana.yaml
 - whoami.yaml
+- auth.yaml
+- ingress.yaml
 
 generators:
 - traefik-forward-auth.yaml
