@@ -276,6 +276,13 @@ spec:
         port: 4000
     middlewares:
       - name: teslamate-traefik-forward-auth
+  - match: Host(`teslamate.bender.sway.org`) && PathPrefix(`/whoami`)
+    kind: Rule
+    services:
+      - name: whoami
+        port: 80
+    middlewares:
+      - name: teslamate-traefik-forward-auth
 ---
 apiVersion: traefik.containo.us/v1alpha1
 kind: IngressRoute
