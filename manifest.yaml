@@ -50,7 +50,6 @@ metadata:
   labels:
     app.kubernetes.io/name: teslamate
 spec:
-  type: LoadBalancer
   ports:
     - port: 4000
       targetPort: http
