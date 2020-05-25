@@ -43,19 +43,6 @@ spec:
         port: 80
     middlewares:
       - name: teslamate-traefik-forward-auth
----
-apiVersion: traefik.containo.us/v1alpha1
-kind: IngressRoute
-metadata:
-  name: grafana 
-  labels:
-    app: teslamate
-spec:
-  entryPoints:
-    - websecure
-  tls:
-    certResolver: myresolver
-  routes:
   - match: Host(`teslamate.bender.sway.org`) && PathPrefix(`/grafana`)
     kind: Rule
     services:
