@@ -4,6 +4,7 @@ resources:
 - manifest.yaml 
 - auth.yaml
 - grafana.yaml
+- whoami.yaml
 
 generators:
 - traefik-forward-auth.yaml

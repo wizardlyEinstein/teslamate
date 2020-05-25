@@ -252,8 +252,8 @@ spec:
   - match: Host(`teslamate.bender.sway.org`)
     kind: Rule
     services:
-      - name: teslamate 
-        port: 4000 
+      - name: whoami
+        port: 80
     middlewares:
       - name: redirect
 ---
