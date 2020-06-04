@@ -34,7 +34,7 @@ spec:
     spec:
       containers:
         - name: teslamate
-          image: teslamate/teslamate:1.19.3
+          image: teslamate/teslamate:1.19.4
           imagePullPolicy: IfNotPresent
           env:
             - name: DATABASE_USER
