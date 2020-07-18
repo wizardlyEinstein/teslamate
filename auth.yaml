@@ -49,6 +49,8 @@ spec:
             secretKeyRef:
               name: traefik-forward-auth-secrets 
               key: traefik-forward-auth-secret
+        - name: LIFETIME
+          value: "604800"
 
 ---
 #
