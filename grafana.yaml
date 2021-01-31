@@ -34,7 +34,7 @@ spec:
     spec:
       containers:
         - name: grafana 
-          image: teslamate/grafana:1.21.1
+          image: teslamate/grafana:1.21.3
           imagePullPolicy: IfNotPresent
           env:
             - name: GF_SERVER_DOMAIN
