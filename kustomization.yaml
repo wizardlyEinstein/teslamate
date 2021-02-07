@@ -10,3 +10,4 @@ resources:
 
 generators:
 - traefik-forward-auth.yaml
+- postgresql_password.yaml

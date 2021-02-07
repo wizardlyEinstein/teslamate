@@ -48,7 +48,10 @@ spec:
             - name: DATABASE_USER
               value: "teslamate"
             - name: DATABASE_PASS
-              value: "teslamate"
+              valueFrom:
+                secretKeyRef:
+                  name: postgresql
+                  key: postgresql-password
             - name: DATABASE_NAME
               value: "teslamate"
             - name: DATABASE_HOST
