@@ -37,6 +37,8 @@ spec:
           image: teslamate/grafana
           imagePullPolicy: IfNotPresent
           env:
+            - name: GF_AUTH_ANONYMOUS_ENABLED
+              value: "true"
             - name: GF_SERVER_DOMAIN
               value: "teslamate.bender.sway.org"
             - name: GF_SERVER_ROOT_URL
