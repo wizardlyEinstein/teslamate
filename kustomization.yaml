@@ -1,8 +1,8 @@
 images:
 - name: teslamate/teslamate
-  newTag: 1.25.0
+  newTag: 1.25.1
 - name: teslamate/grafana
-  newTag: 1.25.0
+  newTag: 1.25.1
 
 namespace: teslamate 
 
