@@ -9,7 +9,7 @@ spec:
   entryPoints:
     - web
   routes:
-  - match: Host(`teslamate.bender.sway.org`)
+  - match: Host(`teslamate-dev.bender.sway.org`)
     kind: Rule
     services:
       - name: whoami
@@ -29,21 +29,21 @@ spec:
   tls:
     certResolver: myresolver
   routes:
-  - match: Host(`teslamate.bender.sway.org`)
+  - match: Host(`teslamate-dev.bender.sway.org`)
     kind: Rule
     services:
       - name: teslamate
         port: 4000
     middlewares:
       - name: teslamate-traefik-forward-auth
-  - match: Host(`teslamate.bender.sway.org`) && PathPrefix(`/whoami`)
+  - match: Host(`teslamate-dev.bender.sway.org`) && PathPrefix(`/whoami`)
     kind: Rule
     services:
       - name: whoami
         port: 80
     middlewares:
       - name: teslamate-traefik-forward-auth
-  - match: Host(`teslamate.bender.sway.org`) && PathPrefix(`/grafana`)
+  - match: Host(`teslamate-dev.bender.sway.org`) && PathPrefix(`/grafana`)
     kind: Rule
     services:
       - name: grafana
