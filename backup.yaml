@@ -1,0 +1,57 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: postgres-backup
+spec:
+  schedule: "0 */12 * * *"
+  jobTemplate:
+    spec:
+      backoffLimit: 0
+      template:
+        spec:
+          initContainers:
+            - name: dump
+              image: postgres:12.1-alpine 
+              volumeMounts:
+                - name: data
+                  mountPath: /backup
+              command: ["/bin/sh", "-c"]
+              args:
+                - pg_dump -f /backup/teslamate.pgdump -U teslamate -h postgresql -d teslamate -v
+              env:
+              - name: PGPASSWORD
+                valueFrom:
+                  secretKeyRef:
+                    name: postgresql
+                    key: postgresql-password
+            - name: encrypt 
+              image: mozilla/sops:v3.7.3-alpine 
+              volumeMounts:
+                - name: data
+                  mountPath: /backup
+              command: ["/bin/sh", "-c"]
+              args: 
+                - sops --encrypt --in-place --age age1yzj8tdyqfz0c484jdfzs82g862d6e935txu2wz4w58ycsvcwqvxq2crzld /backup/teslamate.pgdump
+          containers:
+            - name: push 
+              image: google/cloud-sdk:386.0.0-alpine 
+              volumeMounts:
+                - name: data
+                  mountPath: /backup
+                - mountPath: /.secrets/gcp/gcpServiceUser.json
+                  name: gcpserviceuser
+                  subPath: gcpServiceUser.json
+              command: ["/bin/sh", "-c"]
+              args:
+                - gcloud auth activate-service-account --key-file=${GOOGLE_APPLICATION_CREDENTIALS};
+                  gsutil cp -v /backup/teslamate.pgdump gs://32424361-154a-4ebd-843d-6763887ccfc4/teslamate.pgdump;
+              env:
+                - name: GOOGLE_APPLICATION_CREDENTIALS
+                  value: /.secrets/gcp/gcpServiceUser.json
+          restartPolicy: Never
+          volumes:
+            - name: data
+              emptyDir: {}
+            - name: gcpserviceuser
+              secret:
+                secretName: gcpserviceuser.json

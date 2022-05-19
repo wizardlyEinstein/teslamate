@@ -13,7 +13,9 @@ resources:
 - whoami.yaml
 - auth.yaml
 - ingress.yaml
+- backup.yaml
 
 generators:
 - traefik-forward-auth.yaml
 - postgresql_password.yaml
+- gcpServiceUser.yaml
