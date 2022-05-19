@@ -1,61 +1,40 @@
 ---
-apiVersion: traefik.containo.us/v1alpha1
-kind: IngressRoute
+apiVersion: networking.k8s.io/v1
+kind: Ingress
 metadata:
-  name: redirect
-  labels:
-    app: teslamate
+  name: teslamate 
+  annotations:
+    kubernetes.io/ingress.class: traefik
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    traefik.ingress.kubernetes.io/router.middlewares: teslamate-teslamate-traefik-forward-auth@kubernetescrd
 spec:
-  entryPoints:
-    - web
-  routes:
-  - match: Host(`teslamate.bender.sway.org`)
-    kind: Rule
-    services:
-      - name: whoami
-        port: 80
-    middlewares:
-      - name: redirect
----
-apiVersion: traefik.containo.us/v1alpha1
-kind: IngressRoute
-metadata:
-  name: teslamate
-  labels:
-    app: teslamate
-spec:
-  entryPoints:
-    - websecure
   tls:
-    certResolver: myresolver
-  routes:
-  - match: Host(`teslamate.bender.sway.org`)
-    kind: Rule
-    services:
-      - name: teslamate
-        port: 4000
-    middlewares:
-      - name: teslamate-traefik-forward-auth
-  - match: Host(`teslamate.bender.sway.org`) && PathPrefix(`/whoami`)
-    kind: Rule
-    services:
-      - name: whoami
-        port: 80
-    middlewares:
-      - name: teslamate-traefik-forward-auth
-  - match: Host(`teslamate.bender.sway.org`) && PathPrefix(`/grafana`)
-    kind: Rule
-    services:
-      - name: grafana
-        port: 4001
-    middlewares:
-      - name: teslamate-traefik-forward-auth
----
-apiVersion: traefik.containo.us/v1alpha1
-kind: Middleware
-metadata:
-  name: redirect
-spec:
-  redirectScheme:
-    scheme: https
-    permanent: true
+    - secretName: teslamate-bender-sway-org-tls
+      hosts:
+        - teslamate.bender.sway.org 
+  rules:
+  - host: teslamate.bender.sway.org
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: teslamate 
+            port:
+              number: 4000 
+      - path: /grafana
+        pathType: Prefix
+        backend:
+          service:
+            name: grafana 
+            port:
+              number: 4001 
+      - path: /whoami
+        pathType: Prefix
+        backend:
+          service:
+            name: whoami 
+            port:
+              number: 80 
+
