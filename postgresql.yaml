@@ -152,13 +152,8 @@ spec:
           emptyDir:
             medium: Memory
             sizeLimit: 1Gi
-  volumeClaimTemplates:
-    - metadata:
-        name: data
-      spec:
-        accessModes:
-          - "ReadWriteOnce"
-        resources:
-          requests:
-            storage: "8Gi"
+        - name: data
+          hostPath:
+           path: /storage/k3s/teslamate-psql
+           type: DirectoryOrCreate
         
