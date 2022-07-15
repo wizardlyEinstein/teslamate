@@ -37,12 +37,17 @@ spec:
           image: teslamate/teslamate
           imagePullPolicy: IfNotPresent
           env:
+            - name: ENCRYPTION_KEY 
+              valueFrom:
+                secretKeyRef:
+                  name: secrets 
+                  key: teslamate-key 
             - name: DATABASE_USER
               value: "teslamate"
             - name: DATABASE_PASS
               valueFrom:
                 secretKeyRef:
-                  name: postgresql
+                  name: secrets 
                   key: postgresql-password
             - name: DATABASE_NAME
               value: "teslamate"

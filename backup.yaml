@@ -22,7 +22,7 @@ spec:
               - name: PGPASSWORD
                 valueFrom:
                   secretKeyRef:
-                    name: postgresql
+                    name: secrets 
                     key: postgresql-password
             - name: encrypt 
               image: mozilla/sops:v3.7.3-alpine 

@@ -108,7 +108,7 @@ spec:
             - name: POSTGRES_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: postgresql
+                  name: secrets 
                   key: postgresql-password
             - name: POSTGRES_DB
               value: "teslamate"

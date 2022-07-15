@@ -1,8 +1,8 @@
 images:
 - name: teslamate/teslamate
-  newTag: 1.26.0
+  newTag: 1.27.0
 - name: teslamate/grafana
-  newTag: 1.26.0
+  newTag: 1.27.0
 
 namespace: teslamate 
 
@@ -17,5 +17,5 @@ resources:
 
 generators:
 - traefik-forward-auth.yaml
-- postgresql_password.yaml
+- secrets.yaml
 - gcpServiceUser.yaml
