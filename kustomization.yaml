@@ -16,6 +16,7 @@ resources:
 - auth.yaml
 - ingress.yaml
 - backup.yaml
+- teslamateapi.yaml 
 
 generators:
 - traefik-forward-auth.yaml

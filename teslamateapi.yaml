@@ -1,0 +1,77 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: teslamateapi 
+  labels:
+    app: teslamateapi 
+spec:
+  replicas: 1
+  revisionHistoryLimit: 3
+  selector:
+    matchLabels:
+      app: teslamateapi 
+  template:
+    metadata:
+      labels:
+        app: teslamateapi 
+    spec:
+      containers:
+      - name: teslamatepai 
+        image: tobiasehlert/teslamateapi
+        imagePullPolicy: IfNotPresent
+        readinessProbe:
+          httpGet:
+            path: /api/readyz
+            port: 8080
+          initialDelaySeconds: 3
+          periodSeconds: 3
+        livenessProbe:
+          httpGet:
+            path: /api/healthz
+            port: 8080
+          initialDelaySeconds: 3
+          periodSeconds: 3
+        ports:
+        - containerPort: 8080 
+        env:
+        - name: MQTT_HOST 
+          value: mosquitto-mqtt.mosquitto.svc.cluster.local
+        - name: DATABASE_HOST
+          value: postgresql.teslamate.svc.cluster.local 
+        - name: ENABLE_COMMANDS 
+          value: "true"
+        - name: COMMANDS_ALL 
+          value: "true"
+        - name: API_TOKEN 
+          valueFrom:
+            secretKeyRef:
+              name: secrets 
+              key: API_TOKEN
+        - name: DATABASE_USER
+          value: "teslamate"
+        - name: DATABASE_PASS
+          valueFrom:
+            secretKeyRef:
+              name: secrets 
+              key: postgresql-password
+        - name: DATABASE_NAME
+          value: "teslamate"
+        - name: ENCRYPTION_KEY
+          valueFrom:
+            secretKeyRef:
+              name: secrets
+              key: teslamate-key
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: teslamateapi 
+spec:
+  ports:
+  - port: 18080 
+    targetPort: 8080 
+    name: api 
+    protocol: TCP
+  type: LoadBalancer
+  selector:
+    app: teslamateapi
