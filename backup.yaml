@@ -31,7 +31,7 @@ spec:
                   mountPath: /backup
               command: ["/bin/sh", "-c"]
               args: 
-                - sops --encrypt --in-place --age age1yzj8tdyqfz0c484jdfzs82g862d6e935txu2wz4w58ycsvcwqvxq2crzld /backup/teslamate.pgdump
+                - sops --verbose --encrypt --in-place --age age1yzj8tdyqfz0c484jdfzs82g862d6e935txu2wz4w58ycsvcwqvxq2crzld /backup/teslamate.pgdump
           containers:
             - name: push 
               image: google/cloud-sdk:386.0.0-alpine 
