@@ -19,18 +19,6 @@ spec:
       - name: teslamatepai 
         image: tobiasehlert/teslamateapi
         imagePullPolicy: IfNotPresent
-        readinessProbe:
-          httpGet:
-            path: /api/readyz
-            port: 8080
-          initialDelaySeconds: 3
-          periodSeconds: 3
-        livenessProbe:
-          httpGet:
-            path: /api/healthz
-            port: 8080
-          initialDelaySeconds: 3
-          periodSeconds: 3
         ports:
         - containerPort: 8080 
         env:
