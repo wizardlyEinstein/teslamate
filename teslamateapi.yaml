@@ -22,6 +22,12 @@ spec:
         ports:
         - containerPort: 8080 
         env:
+        - name: TESLAMATE_HOST 
+          value: teslamate.teslamate.svc.cluster.local
+        - name: TESLAMATE_PORT
+          value: "4000"
+        - name: TESLAMATE_SSL
+          value: "false"
         - name: MQTT_HOST 
           value: mosquitto-mqtt.mosquitto.svc.cluster.local
         - name: DATABASE_HOST
