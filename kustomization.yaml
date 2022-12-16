@@ -4,7 +4,7 @@ images:
 - name: teslamate/grafana
   newTag: 1.27.1
 - name: tobiasehlert/teslamateapi
-  newTag: feature-k8s-health-endpoints 
+  newTag: 1.16.0 
 
 namespace: teslamate 
 
