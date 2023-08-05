@@ -154,6 +154,6 @@ spec:
             sizeLimit: 1Gi
         - name: data
           hostPath:
-           path: /storage/k3s/teslamate-psql
-           type: DirectoryOrCreate
+           path: /ssd/k3s/teslamate/psql/
+           type: Directory
         
