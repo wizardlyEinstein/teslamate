@@ -54,7 +54,7 @@ spec:
             - name: DATABASE_HOST
               value: postgresql
             - name: MQTT_HOST
-              value: 192.168.1.51
+              value: mosquitto-mqtt.mosquitto.svc.cluster.local 
             - name: MQTT_USERNAME
               value: 
             - name: MQTT_PASSWORD
