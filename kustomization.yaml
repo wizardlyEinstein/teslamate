@@ -1,10 +1,10 @@
 images:
 - name: teslamate/teslamate
-  newTag: 1.27.3
+  newTag: 1.27.4
 - name: teslamate/grafana
-  newTag: 1.27.3
+  newTag: 1.27.4
 - name: tobiasehlert/teslamateapi
-  newTag: 1.16.0 
+  newTag: 1.16.5 
 
 namespace: teslamate 
 
