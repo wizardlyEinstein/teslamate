@@ -1,8 +1,8 @@
 images:
 - name: teslamate/teslamate
-  newTag: 1.27.4
+  newTag: 1.28.2
 - name: teslamate/grafana
-  newTag: 1.27.4
+  newTag: 1.28.2
 - name: tobiasehlert/teslamateapi
   newTag: 1.16.5 
 
