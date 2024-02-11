@@ -35,7 +35,7 @@ spec:
         - name: ENABLE_COMMANDS 
           value: "true"
         - name: DEBUG_MODE 
-          value: "true"
+          value: "false"
         - name: COMMANDS_ALL 
           value: "true"
         - name: API_TOKEN 
