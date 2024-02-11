@@ -34,6 +34,8 @@ spec:
           value: postgresql.teslamate.svc.cluster.local 
         - name: ENABLE_COMMANDS 
           value: "true"
+        - name: DEBUG_MODE 
+          value: "true"
         - name: COMMANDS_ALL 
           value: "true"
         - name: API_TOKEN 
