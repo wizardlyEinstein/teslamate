@@ -5,6 +5,8 @@ images:
   newTag: 1.28.3
 - name: tobiasehlert/teslamateapi
   newTag: 1.16.5 
+- name: brchri/tesla-geogdo
+  newTag: 2.2.0
 
 namespace: teslamate 
 
@@ -17,8 +19,10 @@ resources:
 - ingress.yaml
 - backup.yaml
 - teslamateapi.yaml 
+- gdo.yaml
 
 generators:
 - traefik-forward-auth.yaml
 - secrets.yaml
 - gcpServiceUser.yaml
+- gdo-config.yaml

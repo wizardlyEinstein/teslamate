@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gdo 
+  labels:
+    app: gdo 
+spec:
+  replicas: 1
+  revisionHistoryLimit: 3
+  selector:
+    matchLabels:
+      app: gdo 
+  template:
+    metadata:
+      labels:
+        app: gdo 
+    spec:
+      volumes:
+        - name: gdo-config-yml 
+          secret:
+            secretName: gdo-config.yml 
+      containers:
+        - name: gdo 
+          image: brchri/tesla-geogdo 
+          imagePullPolicy: IfNotPresent
+          volumeMounts:
+            - name: gdo-config-yml 
+              readOnly: true
+              mountPath: "/app/config/"
