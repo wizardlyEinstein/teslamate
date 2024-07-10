@@ -12,8 +12,35 @@ spec:
     - secretName: teslamate-bender-sway-org-tls
       hosts:
         - teslamate.bender.sway.org 
+    - secretName: teslamate-sindt-org-tls
+      hosts:
+        - teslamate.sindt.org 
   rules:
   - host: teslamate.bender.sway.org
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: teslamate 
+            port:
+              number: 4000 
+      - path: /grafana
+        pathType: Prefix
+        backend:
+          service:
+            name: grafana 
+            port:
+              number: 4001 
+      - path: /whoami
+        pathType: Prefix
+        backend:
+          service:
+            name: whoami 
+            port:
+              number: 80 
+  - host: teslamate.sindt.org
     http:
       paths:
       - path: /
