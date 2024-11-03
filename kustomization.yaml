@@ -3,8 +3,6 @@ images:
   newTag: 1.31.1
 - name: teslamate/grafana
   newTag: 1.31.1
-- name: tobiasehlert/teslamateapi
-  newTag: 1.17.2
 - name: brchri/tesla-geogdo
   newTag: 2.2.1
 
@@ -18,7 +16,6 @@ resources:
 - auth.yaml
 - ingress.yaml
 - backup.yaml
-- teslamateapi.yaml 
 - gdo.yaml
 
 generators:
