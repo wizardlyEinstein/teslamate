@@ -2,23 +2,6 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: postgresql-headless
-  labels:
-    app: postgresql
-spec:
-  type: ClusterIP
-  clusterIP: None
-  ports:
-    - name: tcp-postgresql
-      port: 5432
-      targetPort: tcp-postgresql
-  selector:
-    app: postgresql
-
----
-apiVersion: v1
-kind: Service
-metadata:
   name: postgresql
   labels:
     app: postgresql
@@ -30,73 +13,42 @@ spec:
       targetPort: tcp-postgresql
   selector:
     app: postgresql
-    role: master
+    version: "17"
 
 ---
 apiVersion: apps/v1
-kind: StatefulSet
+kind: StatefulSet 
 metadata:
   name: postgresql
   labels:
     app: postgresql
+    version: "17"
 spec:
-  serviceName: postgresql-headless
   replicas: 1
-  updateStrategy:
-    type: RollingUpdate
   selector:
     matchLabels:
       app: postgresql
-      role: master
+      version: "17"
   template:
     metadata:
       name: postgresql
       labels:
         app: postgresql
-        role: master
+        version: "17"
     spec:      
       securityContext:
         fsGroup: 1001
-      initContainers:
-        - name: init-chmod-data
-          image: docker.io/bitnami/minideb:stretch
-          imagePullPolicy: "Always"
-          resources:
-            requests:
-              cpu: 250m
-              memory: 256Mi
-            
-          command:
-            - /bin/sh
-            - -c
-            - |
-              mkdir -p /data//data
-              chmod 700 /data//data
-              find /data/ -mindepth 0 -maxdepth 1 -not -name ".snapshot" -not -name "lost+found" | \
-                xargs chown -R 1001:1001
-              chmod -R 777 /dev/shm
-          securityContext:
-            runAsUser: 0
-          volumeMounts:
-            - name: data
-              mountPath: /data/
-              subPath: 
-            - name: dshm
-              mountPath: /dev/shm
       containers:
         - name: postgresql
-          image: docker.io/postgres:12.1
-          imagePullPolicy: "IfNotPresent"
+          image: docker.io/postgres:17-alpine
+          imagePullPolicy: Always 
           resources:
             requests:
-              cpu: 250m
-              memory: 256Mi
-            
+              cpu: '1'
+              memory: 1Gi
           securityContext:
             runAsUser: 1001
           env:
-            - name: BITNAMI_DEBUG
-              value: "false"
             - name: POSTGRESQL_PORT_NUMBER
               value: "5432"
             - name: POSTGRESQL_VOLUME_DIR
@@ -112,8 +64,6 @@ spec:
                   key: postgresql-password
             - name: POSTGRES_DB
               value: "teslamate"
-            - name: POSTGRESQL_ENABLE_LDAP
-              value: "no"
           ports:
             - name: tcp-postgresql
               containerPort: 5432
@@ -133,9 +83,7 @@ spec:
               command:
                 - /bin/sh
                 - -c
-                - -e
-                - |
-                  pg_isready -U "teslamate" -d "teslamate" -h 127.0.0.1 -p 5432
+                - exec pg_isready -U "teslamate" -d "teslamate" -h 127.0.0.1 -p 5432
             initialDelaySeconds: 5
             periodSeconds: 10
             timeoutSeconds: 5
@@ -154,6 +102,6 @@ spec:
             sizeLimit: 1Gi
         - name: data
           hostPath:
-           path: /ssd/k3s/teslamate/psql/
+           path: /ssd/k3s/teslamate/psql-17
            type: Directory
         

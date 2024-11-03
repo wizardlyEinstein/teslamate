@@ -10,7 +10,7 @@ namespace: teslamate
 
 resources:
 - teslamate.yaml 
-- postgresql.yaml
+- postgresql17.yaml
 - grafana.yaml
 - whoami.yaml
 - auth.yaml
