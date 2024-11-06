@@ -11,7 +11,7 @@ spec:
         spec:
           initContainers:
             - name: dump
-              image: postgres:12.1-alpine 
+              image: postgres:17.0-alpine 
               volumeMounts:
                 - name: data
                   mountPath: /backup
