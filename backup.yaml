@@ -11,7 +11,7 @@ spec:
         spec:
           initContainers:
             - name: dump
-              image: postgres:17.0-alpine 
+              image: postgres
               volumeMounts:
                 - name: data
                   mountPath: /backup
@@ -25,7 +25,7 @@ spec:
                     name: secrets 
                     key: postgresql-password
             - name: encrypt 
-              image: mozilla/sops:v3.7.3-alpine 
+              image: mozilla/sops
               volumeMounts:
                 - name: data
                   mountPath: /backup
@@ -34,7 +34,7 @@ spec:
                 - sops --verbose --encrypt --in-place --age age1yzj8tdyqfz0c484jdfzs82g862d6e935txu2wz4w58ycsvcwqvxq2crzld /backup/teslamate.pgdump
           containers:
             - name: push 
-              image: google/cloud-sdk:386.0.0-alpine 
+              image: google/cloud-sdk
               volumeMounts:
                 - name: data
                   mountPath: /backup
