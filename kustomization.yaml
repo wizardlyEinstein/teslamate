@@ -6,13 +6,13 @@ images:
 - name: brchri/tesla-geogdo
   newTag: 2.3.1
 - name: postgres
-  newTag: 17.5-alpine@sha256:fbe21607052bb5c298674f2fd8cf044a63aa3ddf50b81627f894f91f40f50bcb
+  newTag: 17.5-alpine@sha256:6567bca8d7bc8c82c5922425a0baee57be8402df92bae5eacad5f01ae9544daa
 - name: thomseddon/traefik-forward-auth
   newTag: 2.2.0
 - name: mozilla/sops
   newTag: v3.7.3-alpine
 - name: google/cloud-sdk
-  newTag: 529.0.0-alpine
+  newTag: 530.0.0-alpine
 - name: thomseddon/traefik-forward-auth
   newTag: 2.2.0
 
