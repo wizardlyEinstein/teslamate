@@ -1,8 +1,8 @@
 images:
 - name: teslamate/teslamate
-  newTag: 2.0.0
+  newTag: 2.1.0
 - name: teslamate/grafana
-  newTag: 2.0.0
+  newTag: 2.1.0
 - name: brchri/tesla-geogdo
   newTag: 2.3.1
 - name: postgres
@@ -12,7 +12,7 @@ images:
 - name: mozilla/sops
   newTag: v3.7.3-alpine
 - name: google/cloud-sdk
-  newTag: 530.0.0-alpine
+  newTag: 531.0.0-alpine
 - name: thomseddon/traefik-forward-auth
   newTag: 2.2.0
 
