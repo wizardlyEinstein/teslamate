@@ -12,7 +12,7 @@ images:
 - name: mozilla/sops
   newTag: v3.7.3-alpine
 - name: google/cloud-sdk
-  newTag: 538.0.0-alpine
+  newTag: 539.0.0-alpine
 - name: thomseddon/traefik-forward-auth
   newTag: 2.2.0
 
