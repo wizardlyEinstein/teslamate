@@ -1,18 +1,18 @@
 images:
 - name: teslamate/teslamate
-  newTag: 2.1.1
+  newTag: 2.2.0
 - name: teslamate/grafana
-  newTag: 2.1.1
+  newTag: 2.2.0
 - name: brchri/tesla-geogdo
   newTag: 2.3.1
 - name: postgres
-  newTag: 17.6-alpine@sha256:855021a5b10954343902a8c22a15f8464233126c1d12d9ad84d4a14c5af07a80
+  newTag: 18.0-alpine@sha256:48c8ad3a7284b82be4482a52076d47d879fd6fb084a1cbfccbd551f9331b0e40
 - name: thomseddon/traefik-forward-auth
   newTag: 2.2.0
 - name: mozilla/sops
   newTag: v3.7.3-alpine
 - name: google/cloud-sdk
-  newTag: 540.0.0-alpine
+  newTag: 546.0.0-alpine
 - name: thomseddon/traefik-forward-auth
   newTag: 2.2.0
 
