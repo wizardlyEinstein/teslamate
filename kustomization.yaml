@@ -13,8 +13,6 @@ images:
   newTag: v3.7.3-alpine
 - name: google/cloud-sdk
   newTag: 546.0.0-alpine
-- name: thomseddon/traefik-forward-auth
-  newTag: 2.2.0
 
 namespace: teslamate 
 
