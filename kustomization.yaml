@@ -5,8 +5,6 @@ images:
   newTag: 2.2.0
 - name: brchri/tesla-geogdo
   newTag: 2.3.1
-- name: postgres
-  newTag: 17.6-alpine@sha256:855021a5b10954343902a8c22a15f8464233126c1d12d9ad84d4a14c5af07a80
 - name: thomseddon/traefik-forward-auth
   newTag: 2.2.0
 - name: mozilla/sops
@@ -19,6 +17,7 @@ namespace: teslamate
 resources:
 - teslamate.yaml 
 - postgresql17.yaml
+- postgresql18.yaml
 - grafana.yaml
 - whoami.yaml
 - auth.yaml
