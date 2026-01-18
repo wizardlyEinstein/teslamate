@@ -1,0 +1,107 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgresql18
+  labels:
+    app: postgresql
+spec:
+  type: ClusterIP
+  ports:
+    - name: tcp-postgresql
+      port: 5432
+      targetPort: tcp-postgresql
+  selector:
+    app: postgresql
+    version: "18"
+
+---
+apiVersion: apps/v1
+kind: StatefulSet 
+metadata:
+  name: postgresql18
+  labels:
+    app: postgresql
+    version: "18"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgresql
+      version: "18"
+  template:
+    metadata:
+      name: postgresql
+      labels:
+        app: postgresql
+        version: "18"
+    spec:      
+      securityContext:
+        fsGroup: 1001
+      containers:
+        - name: postgresql
+          image: postgres:18.1-alpine@sha256:b40d931bd0e7ce6eecc59a5a6ac3b3c04a01e559750e73e7086b6dbd7f8bf545
+          imagePullPolicy: Always 
+          resources:
+            requests:
+              cpu: '1'
+              memory: 1Gi
+          securityContext:
+            runAsUser: 1001
+          env:
+            - name: POSTGRESQL_PORT_NUMBER
+              value: "5432"
+            - name: POSTGRESQL_VOLUME_DIR
+              value: "/data/"
+            - name: PGDATA
+              value: "/data/pgdata"
+            - name: POSTGRES_USER
+              value: "teslamate"
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: secrets 
+                  key: postgresql-password
+            - name: POSTGRES_DB
+              value: "teslamate"
+          ports:
+            - name: tcp-postgresql
+              containerPort: 5432
+          livenessProbe:
+            exec:
+              command:
+                - /bin/sh
+                - -c
+                - exec pg_isready -U "teslamate" -d "teslamate" -h 127.0.0.1 -p 5432
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+            successThreshold: 1
+            failureThreshold: 6
+          readinessProbe:
+            exec:
+              command:
+                - /bin/sh
+                - -c
+                - exec pg_isready -U "teslamate" -d "teslamate" -h 127.0.0.1 -p 5432
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            timeoutSeconds: 5
+            successThreshold: 1
+            failureThreshold: 6
+          volumeMounts:
+            - name: dshm
+              mountPath: /dev/shm
+            - name: data
+              mountPath: /data/
+              subPath: 
+      volumes:
+        - name: dshm
+          emptyDir:
+            medium: Memory
+            sizeLimit: 1Gi
+        - name: data
+          hostPath:
+           path: /ssd/k3s/teslamate/psql-18
+           type: Directory
+        
