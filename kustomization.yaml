@@ -6,13 +6,13 @@ images:
 - name: brchri/tesla-geogdo
   newTag: 2.3.1
 - name: postgres
-  newTag: 18.1-alpine@sha256:b40d931bd0e7ce6eecc59a5a6ac3b3c04a01e559750e73e7086b6dbd7f8bf545
+  newTag: 18.1-alpine@sha256:30f2a9b6f470bece98c10f98952e720c881dc3ef987cf06b5ed4b698a350c1bb
 - name: thomseddon/traefik-forward-auth
   newTag: 2.2.0
 - name: mozilla/sops
   newTag: v3.7.3-alpine
 - name: google/cloud-sdk
-  newTag: 553.0.0-alpine
+  newTag: 554.0.0-alpine
 
 namespace: teslamate 
 
