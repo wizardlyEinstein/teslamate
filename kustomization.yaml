@@ -12,7 +12,7 @@ images:
 - name: mozilla/sops
   newTag: v3.7.3-alpine
 - name: google/cloud-sdk
-  newTag: 554.0.0-alpine
+  newTag: 555.0.0-alpine
 
 namespace: teslamate 
 
