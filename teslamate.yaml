@@ -64,7 +64,7 @@ spec:
             - name: MQTT_TLS_ACCEPT_INVALID_CERTS
               value: "false"
             - name: TZ
-              value: "UTC"
+              value: "America/Chicago"
             - name: LOCALE
               value: "en"
           ports:
