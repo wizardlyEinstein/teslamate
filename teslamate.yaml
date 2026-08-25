@@ -67,6 +67,8 @@ spec:
               value: "America/Chicago"
             - name: LOCALE
               value: "en"
+            - name: MQTT_HOME_ASSISTANT_DISCOVERY
+              value: "true"
           ports:
             - name: http
               containerPort: 4000
